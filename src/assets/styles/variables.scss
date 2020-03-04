@@ -1,0 +1,37 @@
+// Size
+// =========================
+
+$container-width: 940px;
+
+// Colors
+// =========================
+
+$primary-color: #f2a000;
+$black-color: #111;
+$dark-color: #252525;
+$dark-gray-color: #767676;
+$gray-color: #e5e5e5;
+$light-gray-color: #f1f1f0;
+$middle-white-color: #f9f9f9;
+$white-color: #fff;
+
+// Fonts
+// =========================
+
+$primary-font: 'Saira Stencil One';
+$secondary-font: 'Noto Sans';
+
+
+:export {
+ primaryColor: $primary-color;
+ blackColor: $black-color;
+ darkColor: $dark-color;
+ darkGrayColor: $dark-gray-color;
+ grayColor: $gray-color;
+ lightGrayColor: $light-gray-color;
+ middleWhiteColor: $middle-white-color;
+ whiteColor: $white-color;
+ primaryFont: $primary-font;
+ secondaryFont: $secondary-font;
+ containerWidth: $container-width;
+}
