@@ -1,41 +1,45 @@
 import React from "react";
-import { Grid, makeStyles } from "@material-ui/core";
+import { Grid, Typography, makeStyles } from "@material-ui/core";
 
 import SliderMaterialSelection from "../../SliderMaterialSelection/SliderMaterialSelection";
 
-import variables from "../../../assets/styles/variables.scss";
-
-const useStyles = makeStyles({
-  title: {
-    margin: "26px 0",
-    color: variables.blackColor,
-    fontWeight: "bold",
-    fontSize: 56,
-    lineHeight: "56px"
+const useStyles = makeStyles(({ breakpoints }) => ({
+  root: {
+    alignItems: "center",
+    justifyContent: "space-between",
+    flexDirection: "row",
+    [breakpoints.down("sm")]: {
+      justifyContent: "center"
+    }
   },
-  text: {
-    color: variables.darkGrayColor,
-    fontSize: 16,
-    lineHeight: "22px"
+  title: {
+    margin: "50px 0 30px",
+    [breakpoints.down("md")]: {
+      margin: "30px 0 20px"
+    },
+    [breakpoints.down("sm")]: {
+      margin: "10px",
+      textAlign: "center"
+    }
   }
-});
+}));
 
 const SliderOne = () => {
   const classes = useStyles();
 
   return (
-    <Grid spacing={7} container direction="row" justify="space-between" alignItems="center">
-      <Grid item md={7}>
-        <h3 className={classes.title}>
+    <Grid spacing={7} container className={classes.root}>
+      <Grid item xs={10} sm={8} md={6} lg={7}>
+        <Typography variant="h3" className={classes.title}>
           Подбор материалов <br /> по количеству
-        </h3>
-        <p className={classes.text}>
+        </Typography>
+        <Typography variant="subtitle1" className={classes.title}>
           Поиск оптивального предложения строительных и отделочных материалов на основании необходимого количества.
           Компановка заказа несколькими позициями материалов для того, чтобы общая стоимость нужного количества
           материалов получилась оптимальной
-        </p>
+        </Typography>
       </Grid>
-      <Grid item md={5}>
+      <Grid item xs={10} sm={8} md={6} lg={5}>
         <SliderMaterialSelection />
       </Grid>
     </Grid>

@@ -12,9 +12,6 @@ const useStyles = makeStyles({
     paddingTop: 7,
     paddingBottom: 7,
     color: variables.blackColor,
-    "&$checked": {
-      color: variables.blackColor
-    },
     "&:hover": {
       backgroundColor: "transparent"
     }
@@ -51,10 +48,10 @@ const CustomRadio = props => {
   const classes = useStyles();
   return (
     <Radio
+      color="default"
       className={classes.root}
       icon={<span className={classes.icon} />}
       checkedIcon={<span className={clsx(classes.icon, classes.checkedIcon)} />}
-      color="standard"
       {...props}
     />
   );

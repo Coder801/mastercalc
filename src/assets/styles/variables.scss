@@ -14,6 +14,9 @@ $gray-color: #e5e5e5;
 $light-gray-color: #f1f1f0;
 $middle-white-color: #f9f9f9;
 $white-color: #fff;
+$border-color: #b2b2b2;
+$link-color: #2967ba;
+$red-color: #bf5837;
 
 // Fonts
 // =========================
@@ -34,4 +37,7 @@ $secondary-font: 'Noto Sans';
  primaryFont: $primary-font;
  secondaryFont: $secondary-font;
  containerWidth: $container-width;
+ borderColor: $border-color;
+ linkColor: $link-color;
+ redColor: $red-color;
 }

@@ -5,9 +5,12 @@
   "dependencies": {
     "@material-ui/core": "^4.9.5",
     "@material-ui/icons": "^4.9.1",
+    "@material-ui/lab": "^4.0.0-alpha.45",
+    "@material-ui/styles": "^4.9.0",
     "@testing-library/jest-dom": "^4.2.4",
     "@testing-library/react": "^9.3.2",
     "@testing-library/user-event": "^7.1.2",
+    "axios": "^0.19.2",
     "clsx": "^1.1.0",
     "hex-to-rgba": "^2.0.1",
     "node-sass": "^4.13.1",
@@ -15,11 +18,15 @@
     "react": "^16.13.0",
     "react-dom": "^16.13.0",
     "react-flexbox-grid": "^2.1.2",
+    "react-html-parser": "^2.0.2",
+    "react-number-format": "^4.4.1",
     "react-router-dom": "^5.1.2",
     "react-scripts": "3.4.0",
     "react-slick": "^0.25.2",
+    "react-swipeable-views": "^0.13.9",
     "recompose": "^0.30.0",
-    "slick-carousel": "^1.8.1"
+    "slick-carousel": "^1.8.1",
+    "typescript": "^3.8.3"
   },
   "scripts": {
     "start": "react-scripts start",

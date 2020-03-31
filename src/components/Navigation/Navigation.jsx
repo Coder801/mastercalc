@@ -1,32 +1,10 @@
 import React from "react";
-import { Link } from "react-router-dom";
-import { makeStyles } from "@material-ui/core";
+import PropTypes from "prop-types";
+import clsx from "clsx";
+import { NavLink } from "react-router-dom";
+import { Typography, makeStyles } from "@material-ui/core";
 
-import catalogIcon from "../../assets/svg/catalog-icon.svg";
-import calculatorIcon from "../../assets/svg/calculator-icon.svg";
-import chooseIcon from "../../assets/svg/choose-icon.svg";
-
-import variables from "../../assets/styles/variables.scss";
-
-const routes = [
-  {
-    link: "/catalog",
-    label: "Каталог",
-    icon: catalogIcon
-  },
-  {
-    link: "/calculator",
-    label: "Калькулятор",
-    icon: calculatorIcon
-  },
-  {
-    link: "/choose",
-    label: "Подбор",
-    icon: chooseIcon
-  }
-];
-
-const useStyles = makeStyles({
+const useStyles = makeStyles(({ mixins, palette }) => ({
   root: {
     paddingLeft: 22,
     display: "flex"
@@ -36,35 +14,59 @@ const useStyles = makeStyles({
     top: 1,
     marginRight: 10
   },
-  link: {
-    padding: "17px 20px",
-    color: variables.whiteColor,
-    textDecoration: "none",
-    fontSize: 14,
-    lineHeight: "19px",
+  item: {
+    paddingLeft: 20,
+    paddingRight: 20,
+    color: palette.common.white,
     display: "flex",
     alignItems: "center",
-    justifyContent: "center;",
-    "&:hover": {
-      backgroundColor: variables.blackColor,
-      color: variables.primaryColor
+    justifyContent: "center",
+    transition: ".3s ease",
+    textDecoration: "none",
+    ...mixins.toolbar,
+    "&:hover, &.active": {
+      backgroundColor: palette.grey[900],
+      color: palette.primary.main
     }
   }
-});
+}));
 
-const Navigation = () => {
+const Navigation = ({ routes, location }) => {
   const classes = useStyles();
 
   return (
     <nav className={classes.root}>
-      {routes.map(({ link, label, icon }, key) => (
-        <Link className={classes.link} key={key} to={link}>
-          <img className={classes.icon} src={icon} alt="" />
-          {label}
-        </Link>
-      ))}
+      {routes.map(({ link, label, icon }, key) => {
+        const active = new RegExp(link).test(location.pathname) ? "active" : "";
+
+        return (
+          <NavLink key={key} className={clsx(classes.item, active)} to={link} title={label}>
+            <img className={classes.icon} src={icon} alt="" />
+            <Typography variant="body1">{label}</Typography>
+          </NavLink>
+        );
+        // return (
+        //   <Link
+        //     key={key}
+        //     className={clsx(classes.link, active)}
+        //     component={({ className, children }) => (
+        //       <NavLink className={className} to={link} title={label}>
+        //         <img className={classes.icon} src={icon} alt="" />
+        //         {children}
+        //       </NavLink>
+        //     )}
+        //   >
+        //     {label}
+        //   </Link>
+        // );
+      })}
     </nav>
   );
+};
+
+Navigation.propTypes = {
+  routes: PropTypes.array.isRequired,
+  location: PropTypes.object.isRequired
 };
 
 export default Navigation;

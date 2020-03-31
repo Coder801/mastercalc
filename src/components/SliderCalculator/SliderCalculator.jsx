@@ -1,178 +1,178 @@
-import React, { useState } from "react";
-import PropTypes from "prop-types";
-import clsx from "clsx";
-import { makeStyles } from "@material-ui/core/styles";
+import React, { useState, useContext } from "react";
+import { withProps, compose } from "recompose";
 
-import CustomButton from "../CustomButton/CustomButton";
+import { withMastercalcService } from "../hoc-helpers";
+
+import { CalculatorContext } from "../context";
+
 import CustomSelect from "../CustomSelect/CustomSelect";
-import CustomRadio from "../CustomRadio/CustomRadio";
+import CustomListbox from "../CustomListbox/CustomListbox";
+import CustomRadioGroup from "../CustomRadioGroup/CustomRadioGroup";
+import CustomSlider from "../CustomSlider/CustomSlider";
+import Counter from "../Counter/Counter";
 
-import { FormGroup, FormLabel, RadioGroup, FormControlLabel, Divider } from "@material-ui/core";
+import { Button, FormGroup, FormLabel, Divider, makeStyles } from "@material-ui/core";
 
-import variables from "../../assets/styles/variables.scss";
-
-const form = {
-  room: [
-    {
-      name: "length",
-      label: "Длина: {value} см",
-      options: [2000, 3000, 4000, 5000]
-    },
-    {
-      name: "width",
-      label: "Ширина:",
-      counting: "см",
-      options: [2000, 3000, 4000, 5000]
-    },
-    {
-      name: "height",
-      label: "Высота:",
-      counting: "см",
-      options: [2000, 3000, 4000, 5000]
-    }
-  ],
-  appliance: [
-    {
-      name: "window",
-      label: "Окон:",
-      options: [1, 2, 3]
-    },
-    {
-      name: "door",
-      label: "Двери:",
-      options: [1, 2, 3]
-    }
-  ],
-  area: [
-    {
-      name: "walls",
-      label: "Стены"
-    },
-    {
-      name: "ceiling",
-      label: "Потолок"
-    },
-    {
-      name: "floor",
-      label: "Пол"
-    }
-  ],
-  addition: [
-    {
-      name: "state",
-      label: "Состояние потолка",
-      options: [1, 2, 3]
-    },
-    {
-      name: "result",
-      label: "Что нужно в результате",
-      options: [1, 2, 3]
-    }
-  ]
-};
-
-const useStyles = makeStyles(() => ({
+const useStyles = makeStyles(({ breakpoints, palette }) => ({
   form: {
     borderRadius: 30,
     paddingTop: 40,
-    backgroundColor: variables.middleWhiteColor
+    backgroundColor: palette.grey[50],
+    [breakpoints.down("sm")]: {
+      paddingTop: 20
+    }
   },
   label: {
-    color: variables.darkGrayColor,
+    color: palette.grey[600],
     fontSize: 14,
     display: "block",
-    padding: "0 40px 14px"
+    padding: "0 40px 14px",
+    [breakpoints.down("xs")]: {
+      padding: "0 15px 15px"
+    }
+  },
+  listBox: {
+    display: "inline-block",
+    margin: "0 10px 10px 0",
+    [breakpoints.down("xs")]: {
+      marginRight: 0,
+      width: "100%"
+    }
   },
   group: {
     padding: "0 20px 0 40px",
-    marginBottom: 25
+    marginBottom: 25,
+    [breakpoints.down("xs")]: {
+      padding: "0 15px",
+      marginBottom: 10
+    }
   },
   select: {
-    margin: "0 10px 10px 0"
+    margin: "0 10px 10px 0",
+    [breakpoints.down("xs")]: {
+      width: "100%",
+      marginRight: 0
+    }
   },
   divider: {
     margin: "2px 10px 15px 0px"
   },
-  radio: {
+  radioGroup: {
     padding: "0 40px 0",
-    marginBottom: 10
+    marginBottom: 10,
+    [breakpoints.down("xs")]: {
+      padding: "0 20px 0"
+    }
   },
   footer: {
     padding: "20px 20px",
     display: "flex",
     alignItems: "center",
-    justifyContent: "center"
+    justifyContent: "center",
+    [breakpoints.down("xs")]: {
+      padding: "10px 20px"
+    }
+  },
+  slider: {
+    width: 500
   }
 }));
 
-const SelectList = ({ data, state, onChange, className, showArrow }) =>
-  data.map((item, key) => (
-    <CustomSelect
-      className={className}
-      key={key}
-      value={state[item.name]}
-      data={item}
-      showArrow={showArrow}
-      onChange={value => onChange(value, item.name)}
-    />
-  ));
-
-const RadioList = ({ data, state, onChange }) => (
-  <RadioGroup name="area" value={state.area} onChange={event => onChange(event.target.value, "area")} row>
-    {data.map(({ name, label }, key) => (
-      <FormControlLabel key={key} value={name} control={<CustomRadio />} label={label} labelPlacement="end" />
-    ))}
-  </RadioGroup>
-);
-
 const SliderCalculator = () => {
   const classes = useStyles();
-  const [state, setState] = useState({
-    length: 5000,
-    width: 3000,
-    height: 2700,
-    window: 3,
-    door: 1,
-    area: " ",
-    state: " ",
-    result: " "
-  });
+  const parametrs = useContext(CalculatorContext);
+  const { length, height, width, window, door } = options;
 
-  const handleState = (value, key) => setState({ ...state, [key]: value });
+  // useEffect(async () => {
+  //   await getData({
+  //     params: {
+  //       car: "walls"
+  //     }
+  //   }).then(data => {
+  //     console.log(data);
+  //   });
+  // });
+
+  const handleOptionsValue = (value, key) => {
+    setOptions({
+      ...options,
+      [key]: {
+        ...options[key],
+        value
+      }
+    });
+  };
+
+  const PremisesFormatListbox = ({ items, innerComponent, onSave }) =>
+    items.map(({ name, placeholder, title, value, range: { min, max } }, key) => {
+      const InnerComponent = withProps({ value, min, max })(innerComponent);
+      let newValue = value;
+      const handleChange = value => {
+        newValue = value;
+      };
+
+      return (
+        <CustomListbox
+          key={key}
+          className={classes.listBox}
+          value={value}
+          placeholder={placeholder}
+          title={title}
+          onSave={() => onSave(newValue, name)}
+        >
+          <InnerComponent onChange={value => handleChange(value)} />
+        </CustomListbox>
+      );
+    });
 
   return (
     <div className={classes.form}>
       <FormLabel className={classes.label}>Параметры помещения:</FormLabel>
       <FormGroup className={classes.group} row>
-        <SelectList state={state} data={form.room} onChange={handleState} className={classes.select} />
+        <PremisesFormatListbox
+          items={[length, height, width]}
+          innerComponent={CustomSlider}
+          onSave={handleOptionsValue}
+        />
         <Divider className={classes.divider} orientation="vertical" flexItem />
-        <SelectList state={state} data={form.appliance} onChange={handleState} className={classes.select} />
+        <PremisesFormatListbox items={[window, door]} innerComponent={Counter} onSave={handleOptionsValue} />
       </FormGroup>
       <FormLabel className={classes.label}>Что нужно отремонтировать:</FormLabel>
-      <FormGroup className={classes.radio}>
-        <RadioList state={state} data={form.area} onChange={handleState} />
+      <FormGroup className={classes.radioGroup}>
+        <CustomRadioGroup
+          name="area"
+          value={options.area.value}
+          onChange={value => handleOptionsValue(value, "area")}
+        />
       </FormGroup>
       <FormGroup className={classes.group} row>
-        <SelectList state={state} data={form.addition} onChange={handleState} className={classes.select} showArrow />
+        <CustomSelect
+          options={options.state.options}
+          title={options.state.title}
+          value={options.state.value}
+          className={classes.select}
+          onChange={value => handleOptionsValue(value, "state")}
+        />
+        <CustomSelect
+          options={options.result.options}
+          title={options.result.title}
+          value={options.result.value}
+          className={classes.select}
+          onChange={value => handleOptionsValue(value, "result")}
+        />
       </FormGroup>
       <Divider />
       <FormGroup className={classes.footer} row>
-        <CustomButton>Расчитать</CustomButton>
+        <Button variant="contained" color="primary">
+          Расчитать
+        </Button>
       </FormGroup>
     </div>
   );
 };
 
-SelectList.propTypes = {
-  data: PropTypes.array,
-  state: PropTypes.object,
-  onChange: PropTypes.func
-};
-
-RadioList.propTypes = {
-  data: PropTypes.array,
-  state: PropTypes.object,
-  onChange: PropTypes.func
-};
-
-export default SliderCalculator;
+export default compose(
+  withMastercalcService(swapiService => ({
+    getData: swapiService.getTransitionsCategory
+  }))
+)(SliderCalculator);

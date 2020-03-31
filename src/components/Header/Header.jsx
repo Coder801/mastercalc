@@ -1,51 +1,80 @@
 import React from "react";
 import PropTypes from "prop-types";
-import { Grid, Container, makeStyles } from "@material-ui/core";
+import { NavLink } from "react-router-dom";
+import { Grid, Container, Hidden, makeStyles } from "@material-ui/core";
 import { withRouter } from "react-router-dom";
 
-import Navigation from "../Navigation";
+import AppBar from "@material-ui/core/AppBar";
 
-import variables from "../../assets/styles/variables.scss";
+import Navigation from "../Navigation/Navigation";
+import MobileNavigation from "../MobileNavigation/MobileNavigation";
 
-const useStyles = makeStyles({
+// import catalogIcon from "../../assets/svg/catalog-icon.svg";
+import calculatorIcon from "../../assets/svg/calculator-icon.svg";
+// import chooseIcon from "../../assets/svg/choose-icon.svg";
+
+const routes = [
+  // {
+  //   link: "/catalog",
+  //   label: "Каталог",
+  //   icon: catalogIcon
+  // },
+  {
+    link: "/calculator",
+    label: "Калькулятор",
+    icon: calculatorIcon
+  }
+  // {
+  //   link: "/choose",
+  //   label: "Подбор",
+  //   icon: chooseIcon
+  // }
+];
+
+const useStyles = makeStyles(({ palette, mixins }) => ({
   root: {
-    flexGrow: 1,
-    backgroundColor: variables.darkColor
-  },
-  container: {
-    margin: "auto",
-    maxWidth: variables.containerWidth
+    ...mixins.toolbar,
+    ...{ boxShadow: "none", justifyContent: "center" }
   },
   logo: {
-    display: "flex",
-    color: variables.primaryColor,
     fontSize: 24,
-    fontFamily: variables.primaryFont,
-    lineHeight: "38px"
+    lineHeight: "38px",
+    color: palette.primary.main,
+    fontFamily: "Saira Stencil One",
+    textDecoration: "none"
   }
-});
+}));
 
 const Header = ({ location }) => {
   const classes = useStyles();
 
   return (
-    <header className={classes.root}>
-      <Container maxWidth="md">
+    <AppBar className={classes.root} color="secondary" position="static">
+      <Container maxWidth="lg">
         <Grid container>
-          <Grid item md={4} className={classes.logo}>
-            {location.pathname !== "/3" ? "MasterCalc" : ""}
+          <Grid container item xs={8} sm={6} md={4} alignItems="center">
+            {location.pathname !== "/" ? (
+              <NavLink to="/" className={classes.logo}>
+                MasterCalc
+              </NavLink>
+            ) : null}
           </Grid>
-          <Grid item md={8}>
-            <Navigation />
+          <Grid container item xs={4} sm={6} md={8} justify="flex-end" alignItems="flex-end">
+            <Hidden only={["xs", "sm"]}>
+              <Navigation routes={routes} location={location} />
+            </Hidden>
+            <Hidden only={["md", "lg", "xl"]}>
+              <MobileNavigation routes={routes} location={location} />
+            </Hidden>
           </Grid>
         </Grid>
       </Container>
-    </header>
+    </AppBar>
   );
 };
 
 Header.propTypes = {
-  location: PropTypes.any
+  location: PropTypes.object.isRequired
 };
 
 export default withRouter(Header);

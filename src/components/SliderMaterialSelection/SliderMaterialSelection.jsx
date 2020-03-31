@@ -1,45 +1,69 @@
 import React, { useState } from "react";
-import clsx from "clsx";
-import { makeStyles } from "@material-ui/core/styles";
+import PropTypes from "prop-types";
+import { Button, FormGroup, FormControlLabel, Divider, makeStyles } from "@material-ui/core";
 
-import CustomButton from "../CustomButton/CustomButton";
 import CustomSelect from "../CustomSelect/CustomSelect";
 
-import { FormGroup, FormControlLabel, Divider } from "@material-ui/core";
-
-import variables from "../../assets/styles/variables.scss";
-
-const useStyles = makeStyles(() => ({
+const useStyles = makeStyles(({ palette, breakpoints }) => ({
   form: {
     borderRadius: 30,
     paddingTop: 40,
-    backgroundColor: variables.middleWhiteColor
+    backgroundColor: palette.grey[50],
+    [breakpoints.down("sm")]: {
+      paddingTop: 20
+    }
+  },
+  control: {
+    marginBottom: 15,
+    [breakpoints.down("sm")]: {
+      display: "flex",
+      flexDirection: "column-reverse",
+      alignItems: "flex-start",
+      width: "100%",
+      marginRight: 0,
+      marginLeft: 0
+    }
   },
   label: {
-    color: variables.darkGrayColor,
+    color: palette.grey[600],
     fontSize: 14,
     display: "block",
-    padding: "0 40px 14px"
+    width: 100,
+    [breakpoints.down("sm")]: {
+      marginBottom: 5
+    }
   },
   group: {
-    padding: "0 20px 0 20px",
-    marginBottom: 25
+    padding: "0 15px 0 15px",
+    marginBottom: 25,
+    [breakpoints.down("sm")]: {
+      marginBottom: 10
+    }
   },
   footer: {
     padding: "20px 20px",
     display: "flex",
     alignItems: "center",
-    justifyContent: "center"
+    justifyContent: "center",
+    [breakpoints.down("sm")]: {
+      padding: "10px 20px"
+    }
+  },
+  select: {
+    padding: 0,
+    [breakpoints.down("sm")]: {
+      width: "100%"
+    }
   }
 }));
 
-const Label = ({ text }) => <span>{text}</span>;
+const Label = ({ text, className }) => <span className={className}>{text}</span>;
 
 const SliderMaterialSelection = () => {
   const classes = useStyles();
   const [state, setState] = useState({
-    material: " ",
-    count: 50
+    material: "",
+    count: ""
   });
 
   const handleState = (value, key) => setState({ ...state, [key]: value });
@@ -49,34 +73,46 @@ const SliderMaterialSelection = () => {
       <FormGroup className={classes.group} row>
         <FormControlLabel
           labelPlacement="start"
-          label={<Label text="Материал: " />}
+          className={classes.control}
+          label={<Label text="Материал: " className={classes.label} />}
           control={
             <CustomSelect
-              className={clsx(classes)}
+              className={classes.select}
               value={state.material}
-              data={{
-                name: "material",
-                label: "Выбирите материал",
-                options: ["Дерево", "Металл"]
-              }}
-              arrow
+              title="Выбирите материал"
+              options={[
+                {
+                  value: 1,
+                  label: 10
+                },
+                {
+                  value: 2,
+                  label: 20
+                }
+              ]}
               onChange={value => handleState(value, "material")}
             />
           }
         />
         <FormControlLabel
           labelPlacement="start"
-          label={<Label text="Количество: " />}
+          className={classes.control}
+          label={<Label text="Количество: " className={classes.label} />}
           control={
             <CustomSelect
-              className={clsx(classes)}
+              className={classes.select}
               value={state.count}
-              data={{
-                name: "count",
-                label: "Литров",
-                options: [10, 20, 30, 40, 50]
-              }}
-              arrow
+              title="Потолок"
+              options={[
+                {
+                  value: 1,
+                  label: 10
+                },
+                {
+                  value: 2,
+                  label: 20
+                }
+              ]}
               onChange={value => handleState(value, "count")}
             />
           }
@@ -84,10 +120,17 @@ const SliderMaterialSelection = () => {
       </FormGroup>
       <Divider />
       <FormGroup className={classes.footer} row>
-        <CustomButton>Расчитать</CustomButton>
+        <Button variant="contained" color="primary">
+          Расчитать
+        </Button>
       </FormGroup>
     </div>
   );
+};
+
+Label.propTypes = {
+  text: PropTypes.string.isRequired,
+  className: PropTypes.any
 };
 
 export default SliderMaterialSelection;

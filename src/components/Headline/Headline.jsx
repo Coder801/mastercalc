@@ -1,35 +1,34 @@
 import React from "react";
-import { makeStyles } from "@material-ui/core";
+import { Box, Typography, makeStyles } from "@material-ui/core";
 
-import variables from "../../assets/styles/variables.scss";
-
-const useStyles = makeStyles({
+const useStyles = makeStyles(({ spacing, breakpoints, palette }) => ({
   root: {
-    padding: "32px 0"
+    padding: `${spacing(5)}px 0`,
+    [breakpoints.down("sm")]: {
+      padding: `0 0 ${spacing(3)}px`
+    }
   },
   text: {
-    margin: 0,
-    color: variables.primaryColor,
-    fontSize: 36,
-    fontFamily: variables.secondaryFont,
-    lineHeight: "38px"
+    color: palette.primary.main,
+    [breakpoints.down("sm")]: {
+      textAlign: "center"
+    }
   },
   highlight: {
-    fontSize: 40,
-    fontFamily: variables.primaryFont,
-    lineHeight: "63px"
+    fontSize: "1.2em",
+    fontFamily: "Saira Stencil One"
   }
-});
+}));
 
 const Headline = () => {
   const classes = useStyles();
 
   return (
-    <div className={classes.root}>
-      <p className={classes.text}>
+    <Box className={classes.root}>
+      <Typography variant="h2" className={classes.text}>
         Сервис оценки ремонта <br /> и выбора материалов <span className={classes.highlight}>MasterCalc</span>
-      </p>
-    </div>
+      </Typography>
+    </Box>
   );
 };
 

@@ -1,10 +1,8 @@
 import React from "react";
 import PropTypes from "prop-types";
 import clsx from "clsx";
-import { makeStyles } from "@material-ui/core";
+import { Typography, makeStyles } from "@material-ui/core";
 import { default as ReactSlider } from "react-slick";
-
-import variables from "../../assets/styles/variables.scss";
 
 import sliderArrowLeftIcon from "../../assets/svg/slider-arrow-left-icon.svg";
 import sliderArrowRightIcon from "../../assets/svg/slider-arrow-right-icon.svg";
@@ -28,7 +26,7 @@ const slides = [
   }
 ];
 
-const useStyles = makeStyles({
+const useStyles = makeStyles(({ palette, breakpoints }) => ({
   root: {},
   slide: {
     padding: "30px 0"
@@ -36,15 +34,22 @@ const useStyles = makeStyles({
   arrow: {
     height: 76,
     width: 69,
+    zIndex: 100,
     "&:before": {
       display: "none"
     }
   },
   arrowLeft: {
-    left: -100
+    left: -100,
+    [breakpoints.down("sm")]: {
+      left: -20
+    }
   },
   arrowRight: {
-    right: -90
+    right: -90,
+    [breakpoints.down("sm")]: {
+      right: -20
+    }
   },
   dots: {
     listStyle: "none",
@@ -54,6 +59,12 @@ const useStyles = makeStyles({
     display: "flex !important",
     flexDirection: "row",
     justifyContent: "flex-end",
+    [breakpoints.down("md")]: {
+      justifyContent: "center"
+    },
+    [breakpoints.down("sm")]: {
+      display: "none !important"
+    },
 
     "&:before": {
       content: '" "',
@@ -62,29 +73,37 @@ const useStyles = makeStyles({
       height: "100%",
       left: "50%",
       width: "50vw",
-      zIndex: -1,
-      background: variables.whiteColor
+      zIndex: 0,
+      background: palette.common.white,
+      [breakpoints.down("md")]: {
+        display: "none"
+      }
     },
     "& > li": {
+      zIndex: 1,
       width: "auto",
-      color: variables.darkGrayColor
+      color: palette.grey[600]
     },
     "& > .slick-active": {
-      borderBottom: `3px solid ${variables.primaryColor}`,
-      color: variables.primaryColor
+      borderBottom: `3px solid ${palette.primary.main}`,
+      color: palette.primary.main
     }
   },
   dot: {
     display: "flex",
     alignItems: "center",
     justifyContent: "center",
-    width: 229,
-    height: 88,
+    width: 210,
+    height: 80,
     cursor: "pointer",
     textAlign: "center",
-    background: variables.whiteColor
+    background: palette.common.white,
+    transition: ".3s ease",
+    "&:hover": {
+      backgroundColor: "#fefbf5"
+    }
   }
-});
+}));
 
 const SliderArrow = ({ className, classes, onClick, icon }) => {
   return <img alt="" src={icon} className={clsx(className, classes)} onClick={onClick} />;
@@ -96,12 +115,12 @@ const Slider = () => {
     dots: true,
     infinite: true,
     speed: 500,
-    slidesToShow: 1,
-    slidesToScroll: 1,
+    swipeToSlide: false,
+    draggable: false,
     dotsClass: classes.dots,
     nextArrow: <SliderArrow icon={sliderArrowRightIcon} classes={clsx(classes.arrow, classes.arrowRight)} />,
     prevArrow: <SliderArrow icon={sliderArrowLeftIcon} classes={clsx(classes.arrow, classes.arrowLeft)} />,
-    customPaging: i => <div className={classes.dot}>{slides[i].label}</div>
+    customPaging: i => <Typography className={classes.dot}>{slides[i].label}</Typography>
   };
 
   return (
@@ -110,17 +129,17 @@ const Slider = () => {
         <SliderOne />
       </div>
       <div className={classes.slide}>
-        <SliderThree />
+        <SliderSecond />
       </div>
       <div className={classes.slide}>
-        <SliderSecond />
+        <SliderThree />
       </div>
     </ReactSlider>
   );
 };
 
 SliderArrow.propTypes = {
-  className: PropTypes.string,
+  className: PropTypes.any,
   classes: PropTypes.string,
   onClick: PropTypes.func,
   icon: PropTypes.string
