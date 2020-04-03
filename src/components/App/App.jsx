@@ -1,9 +1,6 @@
-import React, { useState } from "react";
+import React from "react";
 import { BrowserRouter as Router, Switch, Route } from "react-router-dom";
 import { ThemeProvider, createMuiTheme } from "@material-ui/core/styles";
-
-import MastercalcService from "../../services/api-mastercalc";
-import { MastercalcServiceContext, CalculatorContext } from "../context";
 
 import Header from "../Header/Header";
 import Home from "../../views/Home/Home";
@@ -194,129 +191,27 @@ let theme = createMuiTheme({
   }
 });
 
-const parametrs = {
-  length: {
-    name: "length",
-    placeholder: "Длинна: {value} см",
-    title: "Длинна:",
-    value: 4000,
-    range: {
-      min: 0,
-      max: 5000
-    }
-  },
-  height: {
-    name: "height",
-    placeholder: "Высота: {value} см",
-    title: "Высота:",
-    value: 3000,
-    range: {
-      min: 0,
-      max: 5000
-    }
-  },
-  width: {
-    name: "width",
-    placeholder: "Ширина: {value} см",
-    title: "Ширина:",
-    value: 3000,
-    range: {
-      min: 0,
-      max: 5000
-    }
-  },
-  window: {
-    name: "window",
-    placeholder: "Окна: {value}",
-    title: "Колличество окон:",
-    value: 1,
-    range: {
-      min: 0,
-      max: 20
-    }
-  },
-  door: {
-    name: "door",
-    placeholder: "Двери: {value}",
-    title: "Колличество дверей:",
-    value: 1,
-    range: {
-      min: 0,
-      max: 20
-    }
-  },
-  area: {
-    name: "area",
-    value: 1
-  },
-  state: {
-    name: "state",
-    title: "Состояние потолка",
-    value: "",
-    options: [
-      {
-        label: "Потолок в старой краске/штукатурке",
-        value: "CEIL_R_CURV"
-      },
-      {
-        label: "Голая плита перекрытия",
-        value: "CEIL_R_NAKE"
-      },
-      {
-        label: "Старый натяжной потолок / гипсокартон",
-        value: "CEIL_R_STRC"
-      }
-    ]
-  },
-  result: {
-    name: "result",
-    title: "Что нужно в результате",
-    value: "",
-    options: [
-      {
-        label: "Ровный окрашенный потолок",
-        value: "CEIL_F_PAIN"
-      },
-      {
-        label: "Окрашенный потолок из гипсокартона",
-        value: "CEIL_F_DRPA"
-      },
-      {
-        label: "Натяжной потолок",
-        value: "CEIL_F_STRC"
-      }
-    ]
-  }
-};
-
 const App = () => {
-  const mastercalcService = new MastercalcService();
-  const [options, setOptions] = useState(parametrs);
-
   return (
-    <MastercalcServiceContext.Provider value={mastercalcService}>
-      <CalculatorContext.Provider value={parametrs}>
-        <ThemeProvider theme={theme}>
-          <Router>
-            <Header />
-            <Switch>
-              <Route exact path="/">
-                <Home />
-              </Route>
-              {/* <Route path="/catalog">
+    <ThemeProvider theme={theme}>
+      <Router>
+        <Header />
+        <Switch>
+          <Route exact path="/">
+            <Home />
+          </Route>
+          {/* <Route path="/catalog">
                 <Catalog />
               </Route> */}
-              <Route path="/calculator">
-                <Calculator />
-              </Route>
-              {/* <Route path="/choose">
+          <Route path="/calculator">
+            <Calculator />
+          </Route>
+          {/* <Route path="/choose">
                 <Choose />
               </Route> */}
-            </Switch>
-          </Router>
-        </ThemeProvider>
-      </CalculatorContext.Provider>
-    </MastercalcServiceContext.Provider>
+        </Switch>
+      </Router>
+    </ThemeProvider>
   );
 };
 

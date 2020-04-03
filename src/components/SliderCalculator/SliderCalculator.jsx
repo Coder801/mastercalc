@@ -1,12 +1,12 @@
-import React, { useState, useContext } from "react";
-import { withProps, compose } from "recompose";
+import React from "react";
+import { compose } from "recompose";
+import { connect } from "react-redux";
 
 import { withMastercalcService } from "../hoc-helpers";
+import { changeRoomParameters } from "../../actions";
 
-import { CalculatorContext } from "../context";
-
+import ListboxGroup from "../ListboxGroup/ListboxGroup";
 import CustomSelect from "../CustomSelect/CustomSelect";
-import CustomListbox from "../CustomListbox/CustomListbox";
 import CustomRadioGroup from "../CustomRadioGroup/CustomRadioGroup";
 import CustomSlider from "../CustomSlider/CustomSlider";
 import Counter from "../Counter/Counter";
@@ -78,85 +78,51 @@ const useStyles = makeStyles(({ breakpoints, palette }) => ({
   }
 }));
 
-const SliderCalculator = () => {
+const SliderCalculator = ({ roomParameters, changeRoomParameters }) => {
   const classes = useStyles();
-  const parametrs = useContext(CalculatorContext);
-  const { length, height, width, window, door } = options;
-
-  // useEffect(async () => {
-  //   await getData({
-  //     params: {
-  //       car: "walls"
-  //     }
-  //   }).then(data => {
-  //     console.log(data);
-  //   });
-  // });
+  const { length, height, width, window, door, area, state, result } = roomParameters;
 
   const handleOptionsValue = (value, key) => {
-    setOptions({
-      ...options,
-      [key]: {
-        ...options[key],
-        value
-      }
+    changeRoomParameters({
+      value,
+      key
     });
   };
-
-  const PremisesFormatListbox = ({ items, innerComponent, onSave }) =>
-    items.map(({ name, placeholder, title, value, range: { min, max } }, key) => {
-      const InnerComponent = withProps({ value, min, max })(innerComponent);
-      let newValue = value;
-      const handleChange = value => {
-        newValue = value;
-      };
-
-      return (
-        <CustomListbox
-          key={key}
-          className={classes.listBox}
-          value={value}
-          placeholder={placeholder}
-          title={title}
-          onSave={() => onSave(newValue, name)}
-        >
-          <InnerComponent onChange={value => handleChange(value)} />
-        </CustomListbox>
-      );
-    });
 
   return (
     <div className={classes.form}>
       <FormLabel className={classes.label}>Параметры помещения:</FormLabel>
       <FormGroup className={classes.group} row>
-        <PremisesFormatListbox
+        <ListboxGroup
+          className={classes.listBox}
           items={[length, height, width]}
           innerComponent={CustomSlider}
           onSave={handleOptionsValue}
         />
         <Divider className={classes.divider} orientation="vertical" flexItem />
-        <PremisesFormatListbox items={[window, door]} innerComponent={Counter} onSave={handleOptionsValue} />
+        <ListboxGroup
+          className={classes.listBox}
+          items={[window, door]}
+          innerComponent={Counter}
+          onSave={handleOptionsValue}
+        />
       </FormGroup>
       <FormLabel className={classes.label}>Что нужно отремонтировать:</FormLabel>
       <FormGroup className={classes.radioGroup}>
-        <CustomRadioGroup
-          name="area"
-          value={options.area.value}
-          onChange={value => handleOptionsValue(value, "area")}
-        />
+        <CustomRadioGroup name="area" value={area.value} onChange={value => handleOptionsValue(value, "area")} />
       </FormGroup>
       <FormGroup className={classes.group} row>
         <CustomSelect
-          options={options.state.options}
-          title={options.state.title}
-          value={options.state.value}
+          options={state.options}
+          title={state.title}
+          value={state.value}
           className={classes.select}
           onChange={value => handleOptionsValue(value, "state")}
         />
         <CustomSelect
-          options={options.result.options}
-          title={options.result.title}
-          value={options.result.value}
+          options={result.options}
+          title={result.title}
+          value={result.value}
           className={classes.select}
           onChange={value => handleOptionsValue(value, "result")}
         />
@@ -171,8 +137,17 @@ const SliderCalculator = () => {
   );
 };
 
+const mapStateToProps = ({ roomParameters }) => ({
+  roomParameters
+});
+
+const mapDispatchToProps = {
+  changeRoomParameters
+};
+
 export default compose(
   withMastercalcService(swapiService => ({
     getData: swapiService.getTransitionsCategory
-  }))
+  })),
+  connect(mapStateToProps, mapDispatchToProps)
 )(SliderCalculator);
