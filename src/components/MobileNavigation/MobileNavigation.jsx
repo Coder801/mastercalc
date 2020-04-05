@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import PropTypes from "prop-types";
 import { SwipeableDrawer, List, ListItem, ListItemIcon, ListItemText, Divider, makeStyles } from "@material-ui/core";
 
@@ -36,7 +36,7 @@ const ListItemLink = props => {
 
 const MobileNavigation = ({ routes }) => {
   const classes = useStyles();
-  const [open, setOpen] = React.useState(false);
+  const [open, setOpen] = useState(false);
 
   const handleDrawerOpen = () => {
     setOpen(true);
@@ -79,8 +79,7 @@ const MobileNavigation = ({ routes }) => {
 };
 
 MobileNavigation.propTypes = {
-  routes: PropTypes.array.isRequired,
-  location: PropTypes.object.isRequired
+  routes: PropTypes.array.isRequired
 };
 
 export default MobileNavigation;

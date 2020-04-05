@@ -4,9 +4,7 @@ import { Grid, Row } from "react-flexbox-grid";
 const Choose = () => {
   return (
     <>
-      <Grid fluid>
-        <Row>Choose</Row>
-      </Grid>
+      <Grid fluid>Choose</Grid>
     </>
   );
 };

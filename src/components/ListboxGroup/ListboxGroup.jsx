@@ -1,4 +1,5 @@
 import React from "react";
+import PropTypes from "prop-types";
 import { withProps } from "recompose";
 
 import CustomListbox from "../CustomListbox/CustomListbox";
@@ -24,5 +25,16 @@ const ListboxGroup = ({ items, innerComponent, onSave, className }) =>
       </CustomListbox>
     );
   });
+
+ListboxGroup.defaultProps = {
+  items: []
+};
+
+ListboxGroup.propTypes = {
+  items: PropTypes.array.isRequired,
+  innerComponent: PropTypes.elementType,
+  className: PropTypes.string,
+  onSave: PropTypes.func
+};
 
 export default ListboxGroup;

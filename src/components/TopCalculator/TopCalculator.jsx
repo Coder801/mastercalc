@@ -1,10 +1,7 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { compose } from "recompose";
 import { connect } from "react-redux";
-import { Container, Grid, Typography, Box } from "@material-ui/core";
-
-import { withMastercalcService } from "../hoc-helpers";
-import { changeRoomParameters } from "../../actions";
+import { Container, Grid, Typography, Box, FormControlLabel } from "@material-ui/core";
 
 import Counter from "../Counter/Counter";
 import ListboxGroup from "../ListboxGroup/ListboxGroup";
@@ -14,7 +11,17 @@ import CustomRadioGroup from "../CustomRadioGroup/CustomRadioGroup";
 
 import { FormGroup, makeStyles } from "@material-ui/core";
 
-const useStyles = makeStyles(({ spacing, breakpoints }) => ({
+import resolveCategoryPlaceholderByValue from "../../helpers/resolveCategoryPlaceholderByValue";
+
+import {
+  changeRoomParameters,
+  setCategoryValue,
+  fetchCategory,
+  fetchCategoryState,
+  setCategoryStateValue
+} from "../../actions";
+
+const useStyles = makeStyles(({ spacing, breakpoints, palette }) => ({
   options: {
     padding: `${spacing(3)}px 0`,
     backgroundColor: "#FCF8EC",
@@ -24,23 +31,68 @@ const useStyles = makeStyles(({ spacing, breakpoints }) => ({
     }
   },
   title: {
-    marginBottom: 10
+    color: palette.grey[600],
+    marginBottom: spacing(2)
+  },
+  listBoxContainer: {
+    width: 320
   },
   listBox: {
     display: "inline-block",
-    margin: "0 10px 10px 0"
+    marginRight: spacing(1)
+  },
+  radio: {
+    justifyContent: "space-between"
+  },
+  select: {
+    margin: `${spacing(2)}px 0 0`,
+    alignItems: "stretch"
+  },
+  label: {
+    color: palette.grey[600],
+    marginBottom: spacing(1)
   }
 }));
 
-const TopCalculator = ({ roomParameters, changeRoomParameters }) => {
+const TopCalculator = ({
+  roomParameters,
+  category,
+  categoryState,
+  setCategoryValue,
+  setCategoryStateValue,
+  changeRoomParameters,
+  fetchCategory,
+  fetchCategoryState
+}) => {
   const classes = useStyles();
-  const { length, height, width, window, door, area, state, result } = roomParameters;
+  const { length, height, width, window, door } = roomParameters;
+
+  const { label, options, value, fetched } = category;
+  const { options: categoryStateOptions, value: categoryStateSelected, categoryStateFetched } = categoryState;
+
+  useEffect(() => {
+    fetched && fetchCategory();
+    categoryStateFetched && fetchCategoryState(label);
+  }, []);
 
   const handleOptionsValue = (value, key) => {
     changeRoomParameters({
       value,
       key
     });
+  };
+
+  const handleSelectCategory = value => {
+    setCategoryValue(value);
+  };
+
+  const handleSelectCategoryState = value => {
+    setCategoryStateValue(value);
+  };
+
+  const handleChangeCategory = value => {
+    fetchCategory(value);
+    fetchCategoryState(value);
   };
 
   return (
@@ -64,29 +116,38 @@ const TopCalculator = ({ roomParameters, changeRoomParameters }) => {
               placeholder={"Потолок"}
               value={"Потолок"}
             >
-              <FormGroup className={classes.radioGroup}>
-                <CustomRadioGroup
-                  name="area"
-                  value={area.value}
-                  onChange={value => handleOptionsValue(value, "area")}
-                />
-              </FormGroup>
-              <FormGroup className={classes.group} row>
-                <CustomSelect
-                  options={state.options}
-                  title={state.title}
-                  value={state.value}
-                  className={classes.select}
-                  onChange={value => handleOptionsValue(value, "state")}
-                />
-                <CustomSelect
-                  options={result.options}
-                  title={result.title}
-                  value={result.value}
-                  className={classes.select}
-                  onChange={value => handleOptionsValue(value, "result")}
-                />
-              </FormGroup>
+              <Box className={classes.listBoxContainer}>
+                <FormGroup>
+                  <CustomRadioGroup
+                    name="area"
+                    value={label}
+                    className={classes.radio}
+                    onChange={value => handleOptionsValue(value, "area")}
+                  />
+                </FormGroup>
+                <FormGroup>
+                  <FormControlLabel
+                    labelPlacement="top"
+                    label={resolveCategoryPlaceholderByValue(label)}
+                    classes={{ root: classes.select, label: classes.label }}
+                    control={
+                      <CustomSelect options={options} value={value} onChange={value => handleSelectCategory(value)} />
+                    }
+                  />
+                  <FormControlLabel
+                    labelPlacement="top"
+                    label="Что нужно в результате"
+                    classes={{ root: classes.select, label: classes.label }}
+                    control={
+                      <CustomSelect
+                        options={categoryStateOptions}
+                        value={categoryStateSelected}
+                        onChange={value => handleSelectCategoryState(value)}
+                      />
+                    }
+                  />
+                </FormGroup>
+              </Box>
             </CustomListbox>
           </Grid>
         </Grid>
@@ -95,17 +156,18 @@ const TopCalculator = ({ roomParameters, changeRoomParameters }) => {
   );
 };
 
-const mapStateToProps = ({ roomParameters }) => ({
+const mapStateToProps = ({ category, categoryState, roomParameters }) => ({
+  category,
+  categoryState,
   roomParameters
 });
 
-const mapDispatchToProps = {
-  changeRoomParameters
-};
+const mapDispatchToProps = dispatch => ({
+  changeRoomParameters,
+  setCategoryValue: setCategoryValue(dispatch),
+  setCategoryStateValue: setCategoryStateValue(dispatch),
+  fetchCategory: fetchCategory(dispatch),
+  fetchCategoryState: fetchCategoryState(dispatch)
+});
 
-export default compose(
-  withMastercalcService(swapiService => ({
-    getData: swapiService.getTransitionsCategory
-  })),
-  connect(mapStateToProps, mapDispatchToProps)
-)(TopCalculator);
+export default compose(connect(mapStateToProps, mapDispatchToProps))(TopCalculator);

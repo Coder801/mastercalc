@@ -10,7 +10,7 @@ const useStyles = makeStyles(({ palette }) => ({
     boxShadow: "none"
   },
   popper: {
-    minWidth: 350,
+    width: 350,
     background: palette.common.white,
     border: "1px solid #D7D7D7",
     boxShadow: "0px 4px 28px rgba(0, 0, 0, 0.13)",
@@ -34,7 +34,7 @@ const useStyles = makeStyles(({ palette }) => ({
 const wrapPlaceholder = (placeholder, value) =>
   placeholder.replace(/\{value\}/, ` <strong>&nbsp;${value}&nbsp;</strong> `);
 
-const CustomListbox = ({ placeholder, value, title, children, onSave, className }) => {
+const ButtonWithModal = ({ placeholder, value, title, children, onSave, className }) => {
   const classes = useStyles();
 
   const [anchorEl, setAnchorEl] = useState(null);
@@ -92,7 +92,7 @@ const CustomListbox = ({ placeholder, value, title, children, onSave, className 
   );
 };
 
-CustomListbox.propTypes = {
+ButtonWithModal.propTypes = {
   value: PropTypes.any,
   placeholder: PropTypes.string,
   title: PropTypes.string,
@@ -101,4 +101,4 @@ CustomListbox.propTypes = {
   className: PropTypes.string
 };
 
-export default CustomListbox;
+export default ButtonWithModal;

@@ -8,38 +8,34 @@ import ChevronRightIcon from "@material-ui/icons/ChevronRight";
 
 const useTreeViewStyles = makeStyles({
   root: {
-    padding: "0"
+    padding: 0
   }
 });
 
-const useTreeItemStyles = makeStyles({
+const useTreeItemStyles = makeStyles(palette => ({
   root: {
     padding: 0,
     "&[aria-expanded] > $content > $label": {
-      color: "#2967BA"
+      color: palette.info.main
     }
   },
-
   content: {
     flexDirection: "row-reverse",
     padding: "10px 0"
   },
-  expanded: {},
   label: {
     backgroundColor: "transparent !important",
-    color: "#111"
+    color: palette.grey[900]
   },
   selected: {
     "& > $content > $label": {
-      color: "#F2A000"
+      color: palette.primary.main
     }
-  },
-  group: {}
-});
+  }
+}));
 
-const StyledTreeItem = props => {
+const StyledTreeItem = ({ label, ...other }) => {
   const classes = useTreeItemStyles();
-  const { label, ...other } = props;
 
   return (
     <TreeItem
@@ -47,9 +43,7 @@ const StyledTreeItem = props => {
       classes={{
         root: classes.root,
         content: classes.content,
-        expanded: classes.expanded,
         selected: classes.selected,
-        group: classes.group,
         label: classes.label
       }}
       {...other}

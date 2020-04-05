@@ -35,48 +35,51 @@ const useStyles = makeStyles(() => ({
   }
 }));
 
-const CustomSelect = ({ value, title, options, className, onChange }) => {
+const CustomSelect = ({ data, placeholder, className, onChange }) => {
   const classes = useStyles();
+
+  const { value, options } = data;
 
   const handleChange = event => {
     onChange(event.target.value);
   };
 
-  const findOption = (value, options) => {
-    const result = options.find(item => item.value === value);
-    return result ? result.label : false;
-  };
-
   return (
     <Select
-      value={value}
+      value={value || ""}
       onChange={handleChange}
       className={className}
       classes={classes}
-      renderValue={value => findOption(value, options) || title}
-      defaultValue={title}
       IconComponent={() => <ExpandMoreIcon className={classes.icon} />}
       disableUnderline
       displayEmpty
     >
-      {options.map(({ value, label, component = <MenuItem /> }, key) =>
-        cloneElement(component, {
-          children: label,
-          value,
-          key
-        })
-      )}
+      <MenuItem value="" disabled>
+        {placeholder}
+      </MenuItem>
+      {options &&
+        options.map(({ value, id, component = <MenuItem /> }, key) =>
+          cloneElement(component, {
+            children: value,
+            value: id,
+            key
+          })
+        )}
     </Select>
   );
 };
 
+CustomSelect.defaultProps = {
+  data: {},
+  placeholder: "",
+  className: ""
+};
+
 CustomSelect.propTypes = {
-  value: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
-  title: PropTypes.string,
-  options: PropTypes.array,
-  onChange: PropTypes.func,
-  renderValue: PropTypes.func,
-  className: PropTypes.any
+  data: PropTypes.object,
+  placeholder: PropTypes.string,
+  className: PropTypes.any,
+  onChange: PropTypes.func
 };
 
 export default CustomSelect;

@@ -8,14 +8,25 @@ interface Service {
 class MastercalcService {
   private service: Service = new ApiService({ baseURL: API_BASE });
 
-  getTransitions = async (url: string, config: object = {}) => {
+  get = async (url: string, config: object = {}) => {
     const response = await this.service.get(url, config);
     return response.data;
   };
 
-  getTransitionsCategory = async (params = {}) => {
-    return this.getTransitions("/get_transitions", params);
-  };
+  getTransitionCategory = async (category: string) =>
+    this.get("/get_transitions", {
+      params: {
+        cat: category
+      }
+    });
+
+  getTransitionCategoryState = async (category: string = "walls", type: string = "initial") =>
+    this.get("/get_transitions", {
+      params: {
+        cat: category,
+        ini_req: type
+      }
+    });
 }
 
 export default MastercalcService;
