@@ -12,6 +12,8 @@ const Orders = () => {
       </Grid>
       <Grid item xs={12}>
         <OrderTable />
+      </Grid>
+      <Grid container item xs={12} justify="flex-end">
         <TotalPrice />
       </Grid>
     </Grid>

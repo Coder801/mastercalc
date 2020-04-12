@@ -1,16 +1,24 @@
 import React from "react";
-import { Box, Typography, Link, Container, makeStyles } from "@material-ui/core";
+import PropTypes from "prop-types";
+import { withProps } from "recompose";
+import { compose } from "lodash/fp";
+import { Box, Container, makeStyles } from "@material-ui/core";
 
-import Headline from "../../components/Headline/Headline";
-import Slider from "../../components/Slider";
+import Headline from "@/components/Headline/Headline";
+import Slider from "@/components/Slider/Slider";
+import PrivacyPolicy from "@/components/PrivacyPolicy/PrivacyPolicy";
+import Copy from "@/components/Copy/Copy";
 
-const useStyles = makeStyles(({ breakpoints, palette, spacing }) => ({
-  page: {
+const useStyles = makeStyles(({ breakpoints, palette }) => ({
+  root: {
     backgroundColor: palette.grey[100],
     minHeight: `calc(100vh - 58px)`,
     [breakpoints.down("md")]: {
       minHeight: `calc(100vh - 48px)`
     }
+  },
+  headline: {
+    backgroundColor: palette.grey[800]
   },
   slider: {
     position: "relative",
@@ -20,65 +28,30 @@ const useStyles = makeStyles(({ breakpoints, palette, spacing }) => ({
     [breakpoints.down("sm")]: {
       padding: "0 40px"
     }
-  },
-  copy: {
-    position: "fixed",
-    transform: "rotate(-90deg)",
-    transformOrigin: "0 0 0",
-    bottom: 0,
-    left: spacing(2),
-    [breakpoints.down("sm")]: {
-      position: "static",
-      transform: "rotate(0)",
-      textAlign: "center",
-      paddingBottom: spacing(2)
-    }
-  },
-  policy: {
-    fontSize: 14,
-    lineHeight: "18px",
-    color: palette.info.main,
-    height: 80,
-    display: "flex",
-    position: "absolute",
-    alignItems: "center",
-    bottom: 0,
-    left: spacing(3),
-    [breakpoints.down("md")]: {
-      position: "static",
-      width: "100%",
-      justifyContent: "center"
-    },
-    [breakpoints.down("sm")]: {
-      height: "auto",
-      paddingBottom: spacing(2)
-    }
   }
 }));
 
-const Home = () => {
-  const classes = useStyles();
-
-  return (
-    <Box className={classes.page} bgcolor="grey.100">
-      <Box bgcolor="grey.800">
-        <Container maxWidth="md">
-          <Headline />
-        </Container>
-      </Box>
-      <Container className={classes.slider} maxWidth="md">
-        <Slider />
-        <Typography className={classes.policy}>
-          <Link href="#" color="inherit">
-            Политика конфиденциальности
-          </Link>
-        </Typography>
-        <Typography className={classes.copy} color="textSecondary">
-          MasterCalc 2020
-        </Typography>
+const Home = ({ classes }) => (
+  <Box className={classes.root}>
+    <Box className={classes.headline}>
+      <Container maxWidth="md">
+        <Headline />
       </Container>
     </Box>
-  );
+    <Container className={classes.slider} maxWidth="md">
+      <Slider />
+      <PrivacyPolicy />
+      <Copy />
+    </Container>
+  </Box>
+);
+
+Home.propTypes = {
+  classes: PropTypes.object
 };
 
-export default Home;
+export default compose(
+  withProps(() => ({
+    classes: useStyles()
+  }))
+)(Home);

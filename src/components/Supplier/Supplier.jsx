@@ -2,22 +2,20 @@ import React from "react";
 import clsx from "clsx";
 import { makeStyles, Typography } from "@material-ui/core";
 
-import variables from "../../assets/styles/variables.scss";
-
-const useStyles = makeStyles({
+const useStyles = makeStyles(({ palette }) => ({
   root: {
     display: "flex",
     flexDirection: "row",
     alignItems: "center"
   },
   label: {
-    color: variables.darkGrayColor,
+    color: palette.grey[700],
     marginRight: 10
   },
   image: {
     maxHeight: 44
   }
-});
+}));
 
 const Supplier = ({ image, label = "Поставщик:", className }) => {
   const classes = useStyles();

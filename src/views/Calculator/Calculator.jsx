@@ -1,12 +1,15 @@
 import React, { useState } from "react";
 import { Container, Grid, Tabs, Tab, Box } from "@material-ui/core";
 
-import TopCalculator from "../../components/TopCalculator/TopCalculator";
-import TabPanel from "../../components/TabPanel/TabPanel";
+import OffersModal from "@/components/Modal/OffersModal";
+import DetailsModal from "@/components/Modal/DetailsModal";
+import TopCalculator from "@/components/TopCalculator/TopCalculator";
+import TabPanel from "@/components/TabPanel/TabPanel";
+import Empty from "@/components/Empty/Empty";
 
-import Material from "../Material/Material";
-import Orders from "../Orders/Orders";
-import Estimates from "../Estimates/Estimates";
+import Material from "@/views/Material/Material";
+import Orders from "@/views/Orders/Orders";
+import Estimates from "@/views/Estimates/Estimates";
 
 const Calculator = () => {
   const [tab, setTab] = useState(1);
@@ -25,6 +28,7 @@ const Calculator = () => {
               <Tab label="Материалы" />
               <Tab label="Заказы 6" />
               <Tab label="Смета" />
+              <Tab label="Не выбрано" />
             </Tabs>
           </Grid>
         </Container>
@@ -40,8 +44,13 @@ const Calculator = () => {
           <TabPanel value={tab} index={2}>
             <Estimates />
           </TabPanel>
+          <TabPanel value={tab} index={3}>
+            <Empty />
+          </TabPanel>
         </Container>
       </Box>
+      <OffersModal />
+      <DetailsModal />
     </>
   );
 };

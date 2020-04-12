@@ -1,11 +1,11 @@
 import React from "react";
 import PropTypes from "prop-types";
-import { makeStyles } from "@material-ui/core/styles";
-import { Grid, Button, Box, Typography } from "@material-ui/core";
+import { Button, Box, Typography, makeStyles } from "@material-ui/core";
+import currencyFormatter from "../../helpers/currencyFormatter";
 
-const useStyles = makeStyles(({ breakpoints }) => ({
+const useStyles = makeStyles(({ breakpoints, spacing }) => ({
   box: {
-    display: "flex",
+    display: "inline-flex",
     alignItems: "center",
     [breakpoints.down("sm")]: {
       marginTop: 0,
@@ -13,34 +13,51 @@ const useStyles = makeStyles(({ breakpoints }) => ({
       width: "100%"
     }
   },
+  info: {
+    display: "flex",
+    alignItems: "flex-end"
+  },
   button: {
     marginRight: 16
+  },
+  caption: {
+    marginRight: spacing(1)
   }
 }));
 
-const TotalPrice = () => {
+const TotalPrice = ({ caption, price, button, buttonCaption }) => {
   const classes = useStyles();
   return (
-    <Grid container justify="flex-end">
-      <Box className={classes.box} bgcolor="grey.100" p={2} mt={2}>
+    <Box className={classes.box} bgcolor="grey.100" p={2}>
+      {button && buttonCaption && (
         <Button className={classes.button} variant="contained" color="primary">
-          Скачать смету
+          {buttonCaption}
         </Button>
-        <Typography variant="body1">Итого по смете:&nbsp;</Typography>
+      )}
+      <Box className={classes.info}>
+        <Typography variant="body1" className={classes.caption}>
+          {caption}
+        </Typography>
         <Typography variant="h5" color="error">
-          12.000
+          {currencyFormatter(price)}
         </Typography>
       </Box>
-    </Grid>
+    </Box>
   );
 };
 
 TotalPrice.propTypes = {
-  value: PropTypes.number,
-  min: PropTypes.number,
-  max: PropTypes.number,
-  step: PropTypes.number,
-  onSave: PropTypes.func
+  price: PropTypes.number,
+  caption: PropTypes.string,
+  button: PropTypes.bool,
+  buttonCaption: PropTypes.string
+};
+
+TotalPrice.defaultProps = {
+  price: 0,
+  caption: "Итог по смете",
+  button: true,
+  buttonCaption: "Скачать смету"
 };
 
 export default TotalPrice;

@@ -45,20 +45,6 @@ const Navigation = ({ routes, location }) => {
             <Typography variant="body1">{label}</Typography>
           </NavLink>
         );
-        // return (
-        //   <Link
-        //     key={key}
-        //     className={clsx(classes.link, active)}
-        //     component={({ className, children }) => (
-        //       <NavLink className={className} to={link} title={label}>
-        //         <img className={classes.icon} src={icon} alt="" />
-        //         {children}
-        //       </NavLink>
-        //     )}
-        //   >
-        //     {label}
-        //   </Link>
-        // );
       })}
     </nav>
   );

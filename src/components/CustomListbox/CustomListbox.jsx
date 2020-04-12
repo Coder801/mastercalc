@@ -2,39 +2,61 @@ import React, { useState } from "react";
 import PropTypes from "prop-types";
 import ReactHtmlParser from "react-html-parser";
 import { Popper, Typography, Button, Fade, ClickAwayListener, Grid, makeStyles } from "@material-ui/core";
+import ConditionWrapper from "../../helpers/conditionWrapper";
 
-const useStyles = makeStyles(({ palette }) => ({
-  button: {
-    width: "100%",
-    transition: "all .3s ease",
-    boxShadow: "none"
-  },
-  popper: {
-    minWidth: 350,
-    background: palette.common.white,
-    border: "1px solid #D7D7D7",
-    boxShadow: "0px 4px 28px rgba(0, 0, 0, 0.13)",
-    borderRadius: 4
-  },
-  header: {
-    justifyContent: "flex-start",
-    padding: "40px 40px 0"
-  },
-  content: {
-    justifyContent: "center",
-    padding: "30px 40px 40px"
-  },
-  footer: {
-    justifyContent: "flex-end",
-    border: "1px solid #F1F1F0",
-    padding: "15px 40px"
-  }
-}));
+const useStyles = makeStyles(({ palette, spacing, breakpoints }) => {
+  const size = {
+    sm: 4,
+    xs: 3
+  };
+
+  return {
+    button: {
+      width: "100%",
+      transition: "all .3s ease",
+      boxShadow: "none"
+    },
+    popper: {
+      minWidth: 360,
+      background: palette.common.white,
+      border: "1px solid #D7D7D7",
+      boxShadow: "0px 4px 28px rgba(0, 0, 0, 0.13)",
+      borderRadius: 4,
+      [breakpoints.down("xs")]: {
+        minWidth: "100%",
+        width: "90vw"
+      }
+    },
+    header: {
+      justifyContent: "flex-start",
+      padding: spacing(size.sm),
+      paddingBottom: 0,
+      [breakpoints.down("xs")]: {
+        padding: spacing(size.xs)
+      }
+    },
+    content: {
+      justifyContent: "center",
+      padding: spacing(size.sm),
+      [breakpoints.down("xs")]: {
+        padding: spacing(size.xs)
+      }
+    },
+    footer: {
+      justifyContent: "flex-end",
+      border: `1px solid ${palette.grey[100]}`,
+      padding: `${spacing(2)}px ${spacing(size.sm)}px`,
+      [breakpoints.down("xs")]: {
+        padding: `${spacing(1)}px ${spacing(size.xs)}px`
+      }
+    }
+  };
+});
 
 const wrapPlaceholder = (placeholder, value) =>
   placeholder.replace(/\{value\}/, ` <strong>&nbsp;${value}&nbsp;</strong> `);
 
-const CustomListbox = ({ placeholder, value, title, children, onSave, className }) => {
+const CustomListbox = ({ placeholder, value, title, children, onSave, className, isClickAway }) => {
   const classes = useStyles();
 
   const [anchorEl, setAnchorEl] = useState(null);
@@ -62,7 +84,10 @@ const CustomListbox = ({ placeholder, value, title, children, onSave, className 
 
       <Popper open={open} anchorEl={anchorEl} transition>
         {({ TransitionProps }) => (
-          <ClickAwayListener onClickAway={handleClickAway}>
+          <ConditionWrapper
+            condition={isClickAway}
+            wrap={children => <ClickAwayListener onClickAway={handleClickAway}>{children}</ClickAwayListener>}
+          >
             <Fade {...TransitionProps} timeout={350}>
               <Grid
                 container
@@ -85,11 +110,16 @@ const CustomListbox = ({ placeholder, value, title, children, onSave, className 
                 </Grid>
               </Grid>
             </Fade>
-          </ClickAwayListener>
+          </ConditionWrapper>
         )}
       </Popper>
     </div>
   );
+};
+
+CustomListbox.defaultProps = {
+  isClickAway: true,
+  onSave: () => {}
 };
 
 CustomListbox.propTypes = {
@@ -98,7 +128,8 @@ CustomListbox.propTypes = {
   title: PropTypes.string,
   onSave: PropTypes.func,
   children: PropTypes.any,
-  className: PropTypes.string
+  className: PropTypes.string,
+  isClickAway: PropTypes.bool
 };
 
 export default CustomListbox;

@@ -1,8 +1,58 @@
 import React, { useState } from "react";
 import PropTypes from "prop-types";
+import { withProps } from "recompose";
+import { compose } from "lodash/fp";
 import { Button, FormGroup, FormControlLabel, Divider, makeStyles } from "@material-ui/core";
 
 import CustomSelect from "../CustomSelect/CustomSelect";
+
+// TODO: Mock data start
+const material = {
+  name: "material",
+  label: "Материал: ",
+  value: "",
+  placeholder: "Выбирите материал",
+  options: [
+    {
+      value: 1,
+      label: "Дерево"
+    },
+    {
+      value: 2,
+      label: "Металл"
+    }
+  ]
+};
+
+const count = {
+  name: "count",
+  label: "Количество: ",
+  value: "",
+  placeholder: "50 литров",
+  options: [
+    {
+      value: 1,
+      label: "10 литров"
+    },
+    {
+      value: 2,
+      label: "20 литров"
+    },
+    {
+      value: 3,
+      label: "30 литров"
+    },
+    {
+      value: 4,
+      label: "40 литров"
+    },
+    {
+      value: 5,
+      label: "50 литров"
+    }
+  ]
+};
+// TODO: Mock data end
 
 const useStyles = makeStyles(({ palette, breakpoints }) => ({
   form: {
@@ -59,64 +109,44 @@ const useStyles = makeStyles(({ palette, breakpoints }) => ({
 
 const Label = ({ text, className }) => <span className={className}>{text}</span>;
 
-const SliderMaterialSelection = () => {
-  const classes = useStyles();
-  const [state, setState] = useState({
-    material: "",
-    count: ""
-  });
+const SliderMaterialSelection = ({ options, classes }) => {
+  const [state, setState] = useState(options);
 
-  const handleState = (value, key) => setState({ ...state, [key]: value });
+  const handleState = (value, key) =>
+    setState(
+      state.map(item => {
+        console.log(item, value, key);
+
+        if (item.name === key) {
+          item.value = value;
+        }
+        return item;
+      })
+    );
 
   return (
     <div className={classes.form}>
       <FormGroup className={classes.group} row>
-        <FormControlLabel
-          labelPlacement="start"
-          className={classes.control}
-          label={<Label text="Материал: " className={classes.label} />}
-          control={
-            <CustomSelect
-              className={classes.select}
-              value={state.material}
-              title="Выбирите материал"
-              options={[
-                {
-                  value: 1,
-                  label: 10
-                },
-                {
-                  value: 2,
-                  label: 20
-                }
-              ]}
-              onChange={value => handleState(value, "material")}
-            />
-          }
-        />
-        <FormControlLabel
-          labelPlacement="start"
-          className={classes.control}
-          label={<Label text="Количество: " className={classes.label} />}
-          control={
-            <CustomSelect
-              className={classes.select}
-              value={state.count}
-              title="Потолок"
-              options={[
-                {
-                  value: 1,
-                  label: 10
-                },
-                {
-                  value: 2,
-                  label: 20
-                }
-              ]}
-              onChange={value => handleState(value, "count")}
-            />
-          }
-        />
+        {options.map(({ name, label, value, placeholder, options }, key) => (
+          <FormControlLabel
+            labelPlacement="start"
+            className={classes.control}
+            label={<Label text={label} className={classes.label} />}
+            key={key}
+            control={
+              <CustomSelect
+                className={classes.select}
+                placeholder={placeholder}
+                data={{
+                  value: value,
+                  options: options
+                }}
+                onChange={value => handleState(value, name)}
+              />
+            }
+          />
+        ))}
+        s
       </FormGroup>
       <Divider />
       <FormGroup className={classes.footer} row>
@@ -128,9 +158,17 @@ const SliderMaterialSelection = () => {
   );
 };
 
-Label.propTypes = {
-  text: PropTypes.string.isRequired,
-  className: PropTypes.any
+SliderMaterialSelection.propTypes = {
+  classes: PropTypes.object,
+  options: PropTypes.array
 };
 
-export default SliderMaterialSelection;
+SliderMaterialSelection.defaultProps = {
+  options: [material, count]
+};
+
+export default compose(
+  withProps(() => ({
+    classes: useStyles()
+  }))
+)(SliderMaterialSelection);

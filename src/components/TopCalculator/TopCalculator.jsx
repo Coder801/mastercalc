@@ -1,15 +1,15 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
+import PropTypes from "prop-types";
 import { compose } from "recompose";
 import { connect } from "react-redux";
-import { Container, Grid, Typography, Box, FormControlLabel } from "@material-ui/core";
+import { Container, Grid, Typography, Box, FormGroup, FormControlLabel, makeStyles } from "@material-ui/core";
 
 import Counter from "../Counter/Counter";
+import CustomSlider from "../CustomSlider/CustomSlider";
 import ListboxGroup from "../ListboxGroup/ListboxGroup";
 import CustomSelect from "../CustomSelect/CustomSelect";
 import CustomListbox from "../CustomListbox/CustomListbox";
 import CustomRadioGroup from "../CustomRadioGroup/CustomRadioGroup";
-
-import { FormGroup, makeStyles } from "@material-ui/core";
 
 import resolveCategoryPlaceholderByValue from "../../helpers/resolveCategoryPlaceholderByValue";
 
@@ -32,20 +32,32 @@ const useStyles = makeStyles(({ spacing, breakpoints, palette }) => ({
   },
   title: {
     color: palette.grey[600],
-    marginBottom: spacing(2)
+    marginBottom: spacing(2),
+    [breakpoints.down("sm")]: {
+      marginBottom: spacing(1)
+    }
   },
   listBoxContainer: {
-    width: 320
+    width: 320,
+    [breakpoints.down("sm")]: {
+      width: "100%"
+    }
   },
   listBox: {
     display: "inline-block",
-    marginRight: spacing(1)
+    marginRight: spacing(1),
+    marginBottom: spacing(1),
+    [breakpoints.down("xs")]: {
+      display: "block",
+      marginRight: 0
+    }
   },
   radio: {
     justifyContent: "space-between"
   },
   select: {
     margin: `${spacing(2)}px 0 0`,
+    maxWidth: "100%",
     alignItems: "stretch"
   },
   label: {
@@ -66,20 +78,17 @@ const TopCalculator = ({
 }) => {
   const classes = useStyles();
   const { length, height, width, window, door } = roomParameters;
-
-  const { label, options, value, fetched } = category;
-  const { options: categoryStateOptions, value: categoryStateSelected, categoryStateFetched } = categoryState;
+  const { label: categoryLabel, fetched: categoryFetched, ...categoryData } = category;
+  const { fetched: categoryStateFetched, ...categoryStateData } = categoryState;
+  const [localCategoryValue, setLocalCategoryValue] = useState(categoryLabel);
 
   useEffect(() => {
-    fetched && fetchCategory();
-    categoryStateFetched && fetchCategoryState(label);
-  }, []);
+    categoryFetched || fetchCategory();
+    categoryStateFetched || fetchCategoryState(categoryLabel);
+  }, [categoryFetched, categoryStateFetched, categoryLabel, fetchCategory, fetchCategoryState]);
 
-  const handleOptionsValue = (value, key) => {
-    changeRoomParameters({
-      value,
-      key
-    });
+  const handleLocalCategory = () => {
+    setLocalCategoryValue(categoryLabel);
   };
 
   const handleSelectCategory = value => {
@@ -95,43 +104,65 @@ const TopCalculator = ({
     fetchCategoryState(value);
   };
 
+  const resolveCategoryByValue = key => {
+    const dictionary = {
+      walls: "Стены",
+      ceiling: "Потолок",
+      floor: "Пол"
+    };
+
+    return dictionary[key];
+  };
+
   return (
     <Box className={classes.options}>
       <Container maxWidth="lg">
         <Grid container>
-          <Grid item sm={12} md={9}>
+          <Grid item xs={12} sm={9}>
             <Typography className={classes.title}>Параметры помещения:</Typography>
+            <ListboxGroup
+              innerComponent={CustomSlider}
+              className={classes.listBox}
+              items={[length, height, width]}
+              onSave={(value, key) => changeRoomParameters(value, key)}
+            />
             <ListboxGroup
               innerComponent={Counter}
               className={classes.listBox}
-              onSave={handleOptionsValue}
-              items={[length, height, width, window, door]}
+              items={[window, door]}
+              onSave={(value, key) => changeRoomParameters(value, key)}
             />
           </Grid>
-          <Grid item sm={12} md={3}>
+          <Grid item xs={12} sm={3}>
             <Typography className={classes.title}>Что нужно отремонтировать:</Typography>
             <CustomListbox
               className={classes.listBox}
               title="Что нужно отремонтировать:"
-              placeholder={"Потолок"}
-              value={"Потолок"}
+              placeholder={resolveCategoryByValue(localCategoryValue)}
+              value={resolveCategoryByValue(localCategoryValue)}
+              onSave={handleLocalCategory}
+              isClickAway={false}
             >
               <Box className={classes.listBoxContainer}>
                 <FormGroup>
                   <CustomRadioGroup
                     name="area"
-                    value={label}
+                    value={categoryLabel}
                     className={classes.radio}
-                    onChange={value => handleOptionsValue(value, "area")}
+                    onChange={value => handleChangeCategory(value)}
                   />
                 </FormGroup>
                 <FormGroup>
                   <FormControlLabel
                     labelPlacement="top"
-                    label={resolveCategoryPlaceholderByValue(label)}
+                    label={resolveCategoryPlaceholderByValue(categoryLabel)}
                     classes={{ root: classes.select, label: classes.label }}
                     control={
-                      <CustomSelect options={options} value={value} onChange={value => handleSelectCategory(value)} />
+                      <CustomSelect
+                        data={categoryData}
+                        placeholder={resolveCategoryPlaceholderByValue(categoryLabel)}
+                        onChange={value => handleSelectCategory(value)}
+                      />
                     }
                   />
                   <FormControlLabel
@@ -140,8 +171,8 @@ const TopCalculator = ({
                     classes={{ root: classes.select, label: classes.label }}
                     control={
                       <CustomSelect
-                        options={categoryStateOptions}
-                        value={categoryStateSelected}
+                        data={categoryStateData}
+                        placeholder="Что нужно в результате"
                         onChange={value => handleSelectCategoryState(value)}
                       />
                     }
@@ -156,6 +187,17 @@ const TopCalculator = ({
   );
 };
 
+TopCalculator.propTypes = {
+  roomParameters: PropTypes.object,
+  category: PropTypes.object,
+  categoryState: PropTypes.object,
+  setCategoryValue: PropTypes.func,
+  setCategoryStateValue: PropTypes.func,
+  changeRoomParameters: PropTypes.func,
+  fetchCategory: PropTypes.func,
+  fetchCategoryState: PropTypes.func
+};
+
 const mapStateToProps = ({ category, categoryState, roomParameters }) => ({
   category,
   categoryState,
@@ -163,7 +205,7 @@ const mapStateToProps = ({ category, categoryState, roomParameters }) => ({
 });
 
 const mapDispatchToProps = dispatch => ({
-  changeRoomParameters,
+  changeRoomParameters: changeRoomParameters(dispatch),
   setCategoryValue: setCategoryValue(dispatch),
   setCategoryStateValue: setCategoryStateValue(dispatch),
   fetchCategory: fetchCategory(dispatch),

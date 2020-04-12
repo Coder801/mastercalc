@@ -1,8 +1,12 @@
 import React from "react";
-import clsx from "clsx";
+import { compose } from "lodash/fp";
+import { connect } from "react-redux";
 import { makeStyles, Divider, Button, Typography, Grid } from "@material-ui/core";
+import clsx from "clsx";
 
-import Supplier from "../Supplier/Supplier";
+import Supplier from "@/components/Supplier/Supplier";
+
+import { toggleModal } from "../../actions";
 
 const useStyles = makeStyles(({ breakpoints, spacing }) => ({
   media: {
@@ -71,7 +75,7 @@ const useStyles = makeStyles(({ breakpoints, spacing }) => ({
   }
 }));
 
-const ProductItem = ({ img, title, text, price, provider }) => {
+const ProductItem = ({ img, title, text, price, provider, toggleModal }) => {
   const classes = useStyles();
 
   return (
@@ -87,8 +91,28 @@ const ProductItem = ({ img, title, text, price, provider }) => {
           </Typography>
         </Grid>
         <Grid container item xs={12} className={classes.actions}>
-          <Button variant="outlined">Побробнее</Button>
-          <Button variant="outlined">Другие предложения 5</Button>
+          <Button
+            variant="outlined"
+            onClick={() =>
+              toggleModal({
+                name: "details",
+                isOpen: true
+              })
+            }
+          >
+            Подробнее
+          </Button>
+          <Button
+            variant="outlined"
+            onClick={() =>
+              toggleModal({
+                name: "offers",
+                isOpen: true
+              })
+            }
+          >
+            Другие предложения 5
+          </Button>
           <Supplier className={classes.supplier} image={provider} />
         </Grid>
       </Grid>
@@ -111,4 +135,8 @@ const ProductItem = ({ img, title, text, price, provider }) => {
   );
 };
 
-export default ProductItem;
+const mapDispatchToProps = dispatch => ({
+  toggleModal: toggleModal(dispatch)
+});
+
+export default compose(connect(null, mapDispatchToProps))(ProductItem);

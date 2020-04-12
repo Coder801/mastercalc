@@ -1,5 +1,7 @@
 import ApiService from "./api-service";
-import { API_BASE } from "./../constants";
+import { API_BASE } from "./../constants/base";
+
+import transformCategories from "./helpers/transformCategories";
 
 interface Service {
   get(url: string, conf?: object): Promise<any>;
@@ -18,7 +20,7 @@ class MastercalcService {
       params: {
         cat: category
       }
-    });
+    }).then(data => data.map(transformCategories));
 
   getTransitionCategoryState = async (category: string = "walls", type: string = "initial") =>
     this.get("/get_transitions", {
@@ -26,7 +28,7 @@ class MastercalcService {
         cat: category,
         ini_req: type
       }
-    });
+    }).then(data => data.map(transformCategories));
 }
 
 export default MastercalcService;

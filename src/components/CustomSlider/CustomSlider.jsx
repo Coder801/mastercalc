@@ -3,14 +3,12 @@ import PropTypes from "prop-types";
 import { makeStyles } from "@material-ui/core/styles";
 import { Input, Slider, Grid } from "@material-ui/core";
 
-import variables from "../../assets/styles/variables.scss";
-
-const useStyles = makeStyles({
+const useStyles = makeStyles(({ palette }) => ({
   root: {
     width: 50,
-    border: `1px solid ${variables.borderColor}`,
+    border: `1px solid ${palette.grey[500]}`,
     borderRadius: 4,
-    margin: "0 10px"
+    margin: "0 10px 10px"
   },
   input: {
     textAlign: "center",
@@ -20,17 +18,17 @@ const useStyles = makeStyles({
     paddingTop: 1,
     paddingBottom: 0
   }
-});
+}));
 
-const useSliderStyles = makeStyles({
+const useSliderStyles = makeStyles(({ palette }) => ({
   root: {
-    color: variables.darkGrayColor,
+    color: palette.grey[600],
     height: 1
   },
   thumb: {
     height: 18,
     width: 18,
-    backgroundColor: "#fff",
+    backgroundColor: palette.common.white,
     border: "2px solid currentColor",
     marginTop: -8,
     marginLeft: -12,
@@ -49,7 +47,7 @@ const useSliderStyles = makeStyles({
     height: 2,
     borderRadius: 4
   }
-});
+}));
 
 const CustomSlider = ({ value, min, max, step = 1, onChange }) => {
   const classesSlider = useSliderStyles();

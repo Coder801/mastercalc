@@ -1,4 +1,7 @@
 import React from "react";
+import PropTypes from "prop-types";
+import { withProps } from "recompose";
+import { compose } from "lodash/fp";
 import { Box, Typography, makeStyles } from "@material-ui/core";
 
 const useStyles = makeStyles(({ spacing, breakpoints, palette }) => ({
@@ -20,16 +23,31 @@ const useStyles = makeStyles(({ spacing, breakpoints, palette }) => ({
   }
 }));
 
-const Headline = () => {
-  const classes = useStyles();
+const Headline = ({ caption, highlight, classes }) => (
+  <Box className={classes.root}>
+    <Typography variant="h2" className={classes.text}>
+      {caption} <span className={classes.highlight}>{highlight}</span>
+    </Typography>
+  </Box>
+);
 
-  return (
-    <Box className={classes.root}>
-      <Typography variant="h2" className={classes.text}>
-        Сервис оценки ремонта <br /> и выбора материалов <span className={classes.highlight}>MasterCalc</span>
-      </Typography>
-    </Box>
-  );
+Headline.propTypes = {
+  caption: PropTypes.oneOfType([PropTypes.string, PropTypes.element]),
+  highlight: PropTypes.string,
+  classes: PropTypes.object
 };
 
-export default Headline;
+Headline.defaultProps = {
+  caption: (
+    <>
+      Сервис оценки ремонта <br /> и выбора материалов
+    </>
+  ),
+  highlight: "MasterCalc"
+};
+
+export default compose(
+  withProps(() => ({
+    classes: useStyles()
+  }))
+)(Headline);

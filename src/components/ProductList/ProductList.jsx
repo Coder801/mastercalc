@@ -3,12 +3,12 @@ import { Box } from "@material-ui/core";
 
 import ProductItem from "../ProductItem/ProductItem";
 
-import productImg0 from "../../assets/img/products/product-0.png";
-import productImg1 from "../../assets/img/products/product-1.png";
-import productImg2 from "../../assets/img/products/product-2.png";
-import providerImg0 from "../../assets/img/providers/provider-0.png";
-import providerImg1 from "../../assets/img/providers/provider-1.png";
-import providerImg2 from "../../assets/img/providers/provider-2.png";
+import productImg0 from "@/assets/img/products/product-0.png";
+import productImg1 from "@/assets/img/products/product-1.png";
+import productImg2 from "@/assets/img/products/product-2.png";
+import providerImg0 from "@/assets/img/providers/provider-0.png";
+import providerImg1 from "@/assets/img/providers/provider-1.png";
+import providerImg2 from "@/assets/img/providers/provider-2.png";
 
 // const useStyles = makeStyles(({}) => ({}));
 

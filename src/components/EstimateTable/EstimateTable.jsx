@@ -1,6 +1,7 @@
 import React from "react";
 
 import { Typography, Table, TableBody, TableCell, TableContainer, TableHead, TableRow } from "@material-ui/core";
+import currencyFormatter from "../../helpers/currencyFormatter";
 
 const createData = (stage, works, material, sum) => ({ stage, works, material, sum });
 
@@ -10,8 +11,6 @@ const rows = [
   createData("Поклейка обоев", 1200, 1300, 2500),
   createData("Итого*", 1200, 1300, 2500)
 ];
-
-const formatPrice = price => `${price}.00`;
 
 const EstimateTable = () => {
   return (
@@ -36,13 +35,13 @@ const EstimateTable = () => {
                 <Typography>{stage}</Typography>
               </TableCell>
               <TableCell align="center">
-                <Typography color="textSecondary">{formatPrice(works)}</Typography>
+                <Typography color="textSecondary">{currencyFormatter(works)}</Typography>
               </TableCell>
               <TableCell align="center">
-                <Typography color="textSecondary">{formatPrice(material)}</Typography>
+                <Typography color="textSecondary">{currencyFormatter(material)}</Typography>
               </TableCell>
               <TableCell align="center">
-                <Typography color="error">{formatPrice(sum)}</Typography>
+                <Typography color="error">{currencyFormatter(sum)}</Typography>
               </TableCell>
             </TableRow>
           ))}

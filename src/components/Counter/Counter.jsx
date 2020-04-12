@@ -4,12 +4,10 @@ import { IconButton, Input, Grid, makeStyles } from "@material-ui/core";
 import AddIcon from "@material-ui/icons/Add";
 import RemoveIcon from "@material-ui/icons/Remove";
 
-import variables from "../../assets/styles/variables.scss";
-
-const useStyles = makeStyles({
+const useStyles = makeStyles(({ palette }) => ({
   root: {
     width: 50,
-    border: `1px solid ${variables.borderColor}`,
+    border: `1px solid ${palette.grey[500]}`,
     borderRadius: 4
   },
   button: {
@@ -27,7 +25,7 @@ const useStyles = makeStyles({
     paddingTop: 1,
     paddingBottom: 0
   }
-});
+}));
 
 const Counter = ({ value = 0, step = 1, onChange }) => {
   const classes = useStyles();

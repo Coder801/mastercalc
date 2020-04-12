@@ -5,13 +5,11 @@ import clsx from "clsx";
 import Radio from "@material-ui/core/Radio";
 import { makeStyles } from "@material-ui/core/styles";
 
-import variables from "../../assets/styles/variables.scss";
-
-const useStyles = makeStyles({
+const useStyles = makeStyles(({ palette }) => ({
   root: {
     paddingTop: 7,
     paddingBottom: 7,
-    color: variables.blackColor,
+    color: palette.common.black,
     "&:hover": {
       backgroundColor: "transparent"
     }
@@ -42,7 +40,7 @@ const useStyles = makeStyles({
       content: '""'
     }
   }
-});
+}));
 
 const CustomRadio = props => {
   const classes = useStyles();

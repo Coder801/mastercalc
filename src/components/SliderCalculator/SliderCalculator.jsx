@@ -1,4 +1,6 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useRef } from "react";
+import PropTypes from "prop-types";
+import { useHistory } from "react-router-dom";
 import { compose } from "recompose";
 import { connect } from "react-redux";
 
@@ -10,13 +12,14 @@ import {
   setCategoryStateValue
 } from "../../actions";
 
-import ListboxGroup from "../ListboxGroup/ListboxGroup";
-import CustomSelect from "../CustomSelect/CustomSelect";
-import CustomRadioGroup from "../CustomRadioGroup/CustomRadioGroup";
-import CustomSlider from "../CustomSlider/CustomSlider";
-import Counter from "../Counter/Counter";
+import ListboxGroup from "@/components/ListboxGroup/ListboxGroup";
+import CustomSelect from "@/components/CustomSelect/CustomSelect";
+import CustomRadioGroup from "@/components/CustomRadioGroup/CustomRadioGroup";
+import CustomSlider from "@/components/CustomSlider/CustomSlider";
+import Counter from "@/components/Counter/Counter";
 
-import resolveCategoryPlaceholderByValue from "../../helpers/resolveCategoryPlaceholderByValue";
+import resolveCategoryPlaceholderByValue from "@/helpers/resolveCategoryPlaceholderByValue";
+import toggleClassByCondition from "@/helpers/toggleClassByCondition";
 
 import { Button, FormGroup, FormControlLabel, Divider, Box, makeStyles, Typography } from "@material-ui/core";
 
@@ -56,13 +59,17 @@ const useStyles = makeStyles(({ breakpoints, palette, spacing }) => ({
     alignItems: "flex-start",
     margin: 0,
     marginBottom: spacing(1),
+    maxWidth: "100%",
     [breakpoints.down("xs")]: {
       alignItems: "stretch"
     }
   },
   selectLabel: {
     display: "none",
-    color: palette.error.main
+    color: palette.error.main,
+    ".novalid &": {
+      display: "block"
+    }
   },
   divider: {
     marginRight: spacing(1),
@@ -88,26 +95,47 @@ const SliderCalculator = ({
   fetchCategoryState
 }) => {
   const classes = useStyles();
+  const history = useHistory();
+  const categoryEl = useRef(null);
+  const categoryStateEl = useRef(null);
 
   // TODO: Refactor this part Start
   const { length, height, width, window, door } = roomParameters;
   const { label: categoryLabel, fetched: categoryFetched, ...categoryData } = category;
   const { fetched: categoryStateFetched, ...categoryStateData } = categoryState;
-  // TODO: Refactor this part End
 
   useEffect(() => {
     categoryFetched || fetchCategory();
     categoryStateFetched || fetchCategoryState(categoryLabel);
-  }, []);
+  }, [categoryFetched, categoryStateFetched, categoryLabel, fetchCategory, fetchCategoryState]);
+
+  const handleCategoryValue = value => {
+    setCategoryValue(value);
+    toggleClassByCondition(value, categoryEl.current, "novalid");
+  };
+
+  const handleCategoryStateValue = value => {
+    setCategoryStateValue(value);
+    toggleClassByCondition(value, categoryStateEl.current, "novalid");
+  };
 
   const handleChangeCategory = value => {
     fetchCategory(value);
     fetchCategoryState(value);
+    categoryEl.current.classList.remove("novalid");
+    categoryStateEl.current.classList.remove("novalid");
   };
 
   const handleCalculate = () => {
-    console.log(categoryData.value, categoryStateData.value);
+    toggleClassByCondition(categoryData.value, categoryEl.current, "novalid");
+    toggleClassByCondition(categoryStateData.value, categoryStateEl.current, "novalid");
+
+    if (categoryData.value && categoryStateData.value) {
+      history.push("/calculator");
+    }
   };
+
+  // TODO: Refactor this part End
 
   return (
     <Box className={classes.form}>
@@ -140,6 +168,7 @@ const SliderCalculator = ({
           <FormControlLabel
             labelPlacement="bottom"
             label="Выбирите состояние потолка"
+            ref={categoryEl}
             classes={{
               root: classes.select,
               label: classes.selectLabel
@@ -148,13 +177,14 @@ const SliderCalculator = ({
               <CustomSelect
                 data={categoryData}
                 placeholder={resolveCategoryPlaceholderByValue(categoryLabel)}
-                onChange={value => setCategoryValue(value)}
+                onChange={value => handleCategoryValue(value)}
               />
             }
           />
           <FormControlLabel
             labelPlacement="bottom"
             label="Выбирите желаемый результат"
+            ref={categoryStateEl}
             classes={{
               root: classes.select,
               label: classes.selectLabel
@@ -163,20 +193,31 @@ const SliderCalculator = ({
               <CustomSelect
                 data={categoryStateData}
                 placeholder="Что нужно в результате"
-                onChange={value => setCategoryStateValue(value)}
+                onChange={value => handleCategoryStateValue(value)}
               />
             }
           />
         </FormGroup>
       </Box>
       <Divider />
-      <Box className={classes.container} row>
+      <Box className={classes.container}>
         <Button variant="contained" color="primary" onClick={handleCalculate}>
           Расчитать
         </Button>
       </Box>
     </Box>
   );
+};
+
+SliderCalculator.propTypes = {
+  roomParameters: PropTypes.object,
+  category: PropTypes.object,
+  categoryState: PropTypes.object,
+  setCategoryValue: PropTypes.func,
+  setCategoryStateValue: PropTypes.func,
+  changeRoomParameters: PropTypes.func,
+  fetchCategory: PropTypes.func,
+  fetchCategoryState: PropTypes.func
 };
 
 const mapStateToProps = ({ category, categoryState, roomParameters }) => ({

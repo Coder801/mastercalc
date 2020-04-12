@@ -58,10 +58,10 @@ const CustomSelect = ({ data, placeholder, className, onChange }) => {
         {placeholder}
       </MenuItem>
       {options &&
-        options.map(({ value, id, component = <MenuItem /> }, key) =>
+        options.map(({ value, label, component = <MenuItem /> }, key) =>
           cloneElement(component, {
-            children: value,
-            value: id,
+            children: label,
+            value,
             key
           })
         )}
