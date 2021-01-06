@@ -11,7 +11,7 @@
     "@testing-library/react": "^9.3.2",
     "@testing-library/user-event": "^7.1.2",
     "acorn": "^7.1.1",
-    "axios": "^0.19.2",
+    "axios": "^0.21.1",
     "babel-plugin-root-import": "^6.5.0",
     "clsx": "^1.1.0",
     "currency-formatter": "^1.5.5",
