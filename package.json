@@ -16,7 +16,7 @@
     "clsx": "^1.1.0",
     "currency-formatter": "^1.5.5",
     "hex-to-rgba": "^2.0.1",
-    "minimist": "^1.2.3",
+    "minimist": "^1.2.6",
     "node-sass": "^4.13.1",
     "normalize.css": "^8.0.1",
     "react": "^16.13.0",
